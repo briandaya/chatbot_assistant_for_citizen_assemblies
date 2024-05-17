@@ -21,4 +21,4 @@ WEAVIATE_HOST = 'weaviate'
 WEAVIATE_PORT = 8080
 
 # Collection name in Weaviate
-INDEX_NAME = "Documents_md2"
+INDEX_NAME = "Documents_md3"
