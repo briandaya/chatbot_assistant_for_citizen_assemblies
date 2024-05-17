@@ -1,0 +1,100 @@
+---
+version: '3.4'
+services:
+  weaviate:
+    command:
+    - --host
+    - 0.0.0.0
+    - --port
+    - '8080'
+    - --scheme
+    - http
+    #image: cr.weaviate.io/semitechnologies/weaviate:1.24.6
+    image: cr.weaviate.io/semitechnologies/weaviate:1.25.0
+    ports:
+    - 8080:8080
+    - 50051:50051
+    volumes:
+    - ./services/weaviate/weaviate_data:/var/lib/weaviate
+    restart: on-failure:0
+    environment:
+      #TRANSFORMERS_INFERENCE_API: '***REMOVED***'
+      #RERANKER_INFERENCE_API: '***REMOVED***'
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      #DEFAULT_VECTORIZER_MODULE: 'text2vec-transformers'
+      DEFAULT_VECTORIZER_MODULE: none
+      #ENABLE_MODULES: 'text2vec-transformers,reranker-transformers'
+      CLUSTER_HOSTNAME: 'node1'
+  #ollama:
+  #  image: ollama/ollama
+  #  volumes:
+  #    - ./services/models:/root/.ollama
+  #  ports:
+  #    - 11434:11434
+  #  deploy:
+  #    resources:
+  #      reservations:
+  #        devices:
+  #          - capabilities: 
+  #              - 'gpu'
+  orchestator:
+    build: 
+      context: ./services/orchestator
+      dockerfile: Dockerfile
+    image: orchestator
+    #volumes:
+    #  - ./services/orchestator:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      #- ollama
+      - weaviate
+    develop:
+      watch:
+        - action: sync
+          path: ./services/orchestator
+          target: /app
+        #- action: reload
+        #  path:
+  ingestion:
+    build: 
+      context: ./services/ingestion
+      dockerfile: Dockerfile
+    image: ingestion
+    volumes:
+    #  - ./services/ingestion:/app
+      - ./expert_docs:/expert_docs
+    ports:
+      - 8010:8010
+    #depends_on:
+      #- ollama
+      #- weaviate
+    develop:
+      watch:
+        - action: sync
+          path: ./services/ingestion
+          target: /app
+        #- action: reload
+        #  path:
+  streamlit:
+    build: 
+      context: ./services/streamlit/app
+      dockerfile: Dockerfile
+    image: streamlit
+    #volumes:
+    #  - ./services/streamlit/app:/app
+    ports:
+      - 8501:8501
+    depends_on:
+      - orchestator
+    environment:
+      AVAILABLE_MODELS: '[{"MODEL_LABEL": "Cloud-ollama-llama3", "MODEL_NAME": "llama3"}, {"MODEL_LABEL": "Local-ollama-mistral_custom", "MODEL_NAME": "mistral_custom"}, {"MODEL_LABEL": "Local-ollama-llama2_custom", "MODEL_NAME": "llama2_custom"}]'
+    develop:
+      watch:
+        - action: sync
+          path: ./services/streamlit/app
+          target: /app
+        #- action: reload
+        #  path:
