@@ -58,26 +58,26 @@ services:
           target: /app
         #- action: reload
         #  path:
-  ingestion:
-    build: 
-      context: ./services/ingestion
-      dockerfile: Dockerfile
-    image: ingestion
-    volumes:
-    #  - ./services/ingestion:/app
-      - ./expert_docs:/expert_docs
-    ports:
-      - 8010:8010
-    #depends_on:
-      #- ollama
-      #- weaviate
-    develop:
-      watch:
-        - action: sync
-          path: ./services/ingestion
-          target: /app
-        #- action: reload
-        #  path:
+#  ingestion:
+#    build: 
+#      context: ./services/ingestion
+#      dockerfile: Dockerfile
+#    image: ingestion
+#    volumes:
+#    #  - ./services/ingestion:/app
+#      - ./expert_docs:/expert_docs
+#    ports:
+#      - 8010:8010
+#    #depends_on:
+#      #- ollama
+#      #- weaviate
+#    develop:
+#      watch:
+#        - action: sync
+#          path: ./services/ingestion
+#          target: /app
+#        #- action: reload
+#        #  path:
   streamlit:
     build: 
       context: ./services/streamlit/app
