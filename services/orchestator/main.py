@@ -55,6 +55,7 @@ async def rag_query(model_name: str, action: str, request: QueryRequest):
         #response_content = result.get("answer", "No se pudo obtener una respuesta.")
         
         return result#{"response": response_content}
+        
     except Exception as e:
         logging.error(f"Error processing query: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -62,14 +63,7 @@ async def rag_query(model_name: str, action: str, request: QueryRequest):
 @app.get("/")
 async def root():
     return {
-        "message": "Welcome to the chatbot assistant for citizen assemblies!\n\n"
-                   "To start using the chatbot, you can perform the following actions:\n"
-                   "- Start and keep Mistral active: /up/mistral_custom\n"
-                   "- Start and keep Llama active: /up/llama_custom\n"
-                   "- Stop Mistral: /down/mistral_custom\n"
-                   "- Stop Llama: /down/llama_custom\n"
-                   "- Complete a question: /complete/{text}\n"
-                   "- Chat with the chatbot: /chat?role={role}&content={content}\n"
+        "message": "Welcome to the chatbot assistant for citizen assemblies!"
     }
 
 
