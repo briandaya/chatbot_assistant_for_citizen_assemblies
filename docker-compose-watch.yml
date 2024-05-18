@@ -90,7 +90,8 @@ services:
     depends_on:
       - orchestator
     environment:
-      AVAILABLE_MODELS: '[{"MODEL_LABEL": "Cloud-ollama-llama3", "MODEL_NAME": "llama3"}, {"MODEL_LABEL": "Local-ollama-mistral_custom", "MODEL_NAME": "mistral_custom"}, {"MODEL_LABEL": "Local-ollama-llama2_custom", "MODEL_NAME": "llama2_custom"}]'
+      AVAILABLE_MODELS: '[{"MODEL_LABEL": "Cloud-ollama-llama3", "MODEL_NAME": "llama3"}]'
+      #, {"MODEL_LABEL": "Local-ollama-mistral_custom", "MODEL_NAME": "mistral_custom"}, {"MODEL_LABEL": "Local-ollama-llama2_custom", "MODEL_NAME": "llama2_custom"}]'
     develop:
       watch:
         - action: sync

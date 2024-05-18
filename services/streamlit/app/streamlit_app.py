@@ -21,8 +21,32 @@ hide_footer_style = """
     <style>
     .reportview-container .main footer {visibility: hidden;}    
     """
-st.markdown("##### Bienvenida!. Para comenzar, selecciona un modelo de lenguaje y escribe tu pregunta en el cuadro de chat.")# URL del servicio orquestador
-#st.markdown("<style>.st-emotion-cache-ul70r3 p {font-size: 0.85rem; font-weight: 200;} .st-emotion-cache-ul70r3 p:nth-child(1),p:nth-child(2) {font-size: 1rem; font-weight: bold;} .st-emotion-cache-ul70r3 p:last-child {display: none;}", unsafe_allow_html=True)
+
+st.markdown("""
+##### Introducción
+Bienvenidos/as al Prototipo de Asistente Conversacional Responsable para Asambleas Ciudadanas.
+Este asistente está diseñado para apoyar a las personas participantes en una Asamblea sobre el sistema energético y agroalimentario en Cataluña, facilitando información especializada y promoviendo el contraste de perspectivas.
+""")
+
+st.markdown("""
+##### Guía de Uso
+1. **Selecciona un Modelo**: Por limitaciones técnicas se ha habilitado solo un modelo, pero está preparado para múltiples.
+2. **Haz una Pregunta**: Escribe tu pregunta en el cuadro de chat y presiona Enter.
+3. **Interpreta la Respuesta**: El asistente proporcionará información relevante y citará las fuentes utilizadas, con enlaces a los documentos.
+""")
+
+st.markdown("""
+##### Fiabilidad y Limitaciones
+Este asistente utiliza modelos de lenguaje avanzados y técnicas de recuperación de información para proporcionar respuestas precisas. Sin embargo, no todas las preguntas pueden ser respondidas completamente. Se recomienda consultar fuentes adicionales en caso de duda.
+""")
+
+st.markdown("""
+##### Ejemplos de Preguntas
+- ¿Cuál es el impacto de la ganadería intensiva en el medio ambiente?
+- ¿Qué alternativas existen a las grandes instalaciones de producción de energía?
+""")
+
+
 
 
 # URL of the orchestrator service
@@ -53,6 +77,7 @@ if "id" not in st.session_state:
 session_id = st.session_state.id
 client = None
 
+
 # Function to reset chat history
 def reset_chat():
     st.session_state.messages = []
@@ -71,11 +96,22 @@ def send_message(model_name, action, message):
         decoded_response = response.json()
         
         sources = "\n>Fuentes: \n"
-        unique_file_names = set(info['file_name'] for info in decoded_response["metadata"].values() )
-        for name in unique_file_names:
-            sources += f">- {name}\n"
+        #unique_file_names = set(info['file_name'] for info in decoded_response["metadata"].values() )
+        #for name in unique_file_names:
+        #    sources += f">- {name}\n"
+        unique_files = set((info['file_name'], info['title']) for info in decoded_response["metadata"].values() )
+        for file_name, title in unique_files:
+            url_file = ""
+            if file_name == "AR5_WG3_glossary_ES.pdf":
+                url_file = "https://drive.google.com/file/d/1WxJidLCt8c6tPUxgAfZT8o_rEQiHt2zn/view?usp=sharing"
+            elif file_name == "accc_kit-informativo_agroalimentacion_v2_esp.md":
+                url_file = "https://drive.google.com/file/d/1lBiWtnxAY9sScAR21aBhtxw7EQNhkcKX/view?usp=sharing"
+            elif file_name == "accc_kit-informativo_energia_esp_custom.md":
+                url_file = "https://drive.google.com/file/d/1DYQArRrSu82cZWFjLb5UGg9vteGdJFTd/view?usp=sharing"
+            
+            sources += f">- [{title}]({url_file})\n"
 
-        return decoded_response.get("response", "No se ha recibido respuesta")+sources+json.dumps(decoded_response["metadata"], indent=4)
+        return decoded_response.get("response", "No se ha recibido respuesta")+sources#+"\n\n"+json.dumps(decoded_response["metadata"], indent=4)
     except requests.exceptions.RequestException as e:
         error_message = f"Error al comunicarse con el orquestador: {e}"
         st.error(error_message)
@@ -116,7 +152,7 @@ if prompt := st.chat_input("Introduce tu pregunta:"):
             full_response += chunk
             message_placeholder.markdown(full_response + "▌")
 
-        message_placeholder.markdown(full_response)
+        # message_placeholder.markdown(full_response)
 
     # Add assistant response to chat history
     st.session_state["messages"].append({"role": "assistant", "content": full_response})

@@ -1,10 +1,10 @@
 ---
-title: EL SISTEMA AGROALIMENTARIO EN CATALUÑA \\ ASAMBLEA CIUDADANA POR EL CLIMA DE CATALUÑA
+title: EL SISTEMA AGROALIMENTARIO EN CATALUÑA - ASAMBLEA CIUDADANA POR EL CLIMA DE CATALUÑA
 author: Departamento de Acción Climática, Alimentación y Agenda Rural; Reguant Fosas, Francesc; Rivera Ferré, Marta G.; Riu, Manel
 keywords: agroecología; sistema agroalimentario intensivo; sostenibilidad, emisiones
 ---
 
-# EL SISTEMA AGROALIMENTARIO EN CATALUÑA \\ ASAMBLEA CIUDADANA POR EL CLIMA DE CATALUÑA.
+# EL SISTEMA AGROALIMENTARIO EN CATALUÑA - ASAMBLEA CIUDADANA POR EL CLIMA DE CATALUÑA.
 
 Este documento ha sido realizado con las aportaciones de los miembros del grupo de contenidos formado por personal técnico del Departamento de Acción Climática, Alimentación y Agenda Rural y dos expertos externos independientes con respecto a los posicionamientos sobre el dilema planteado
 

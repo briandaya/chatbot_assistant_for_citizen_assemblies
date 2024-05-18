@@ -2,7 +2,9 @@ from config import *
 from llama_index.llms.ollama import Ollama
 from llama_index.vector_stores.weaviate import WeaviateVectorStore
 from llama_index.embeddings.text_embeddings_inference import TextEmbeddingsInference
-from llama_index.core import VectorStoreIndex, Settings
+from llama_index.core import VectorStoreIndex, Settings, ChatPromptTemplate
+from llama_index.core.llms import ChatMessage, MessageRole
+
 import weaviate
 import os
 import logging
@@ -41,7 +43,69 @@ def initialize_query_engine(weaviate_client, index_name, text_key="content"):
                                        index_name=index_name,
                                        text_key=text_key)
     index = VectorStoreIndex.from_vector_store(vector_store)
-    return index.as_query_engine(similarity_top_k=5)
+
+
+    # Custom Text QA Prompt
+    qa_prompt_str = (
+        "La información de contexto está abajo.\n"
+        "---------------------\n"
+        "{context_str}\n"
+        "---------------------\n"
+        "Dada la información del contexto y no el conocimiento previo, "
+        "responde la pregunta, en el mismo idioma: {query_str}\n"
+    )
+    
+    basic_content = (
+                "Eres un experto en cambio climático que ayuda a las personas participantes de una Asamblea Ciudadana "
+                "que debate sobre el impacto de las macrogranjas en su territorio regional.\n"
+                "Respondes únicamente sobre ese ámbito y nada más, no dejes que te desvíen a otros temas. "
+                "Responde sin sesgo y sin lenguaje ofensivo. Responde de forma sintética, concisa y coherente.\n"
+                "Si no sabes la respuesta, puedes decir 'No sé' o 'No tengo información sobre eso'.\n"
+                "Primero identificarás si la pregunta busca una definición o explicación, o bien busca una comparación o contraste. "
+                "Si no se trata de ninguna de las dos, debes reconducir la pregunta hacia una de ellas.\n"
+                "También puedes identificar si la pregunta busca una causa o consecuencia, o bien busca una solución o recomendación. "
+                "Si no se trata de ninguna de las dos, debes reconducir la pregunta hacia una de ellas.\n"
+                "Te abstendrás de emitir opiniones personales y de hacer juicios de valor o de posicionarte sobre opciones.\n"
+                "La única excepción es cuando haya una opción claramente favorable o contraria a los Derechos Humanos, en cuyo caso siempre defenderás los Derechos Humanos.\n"
+                "Si te preguntan ventajas/inconvenientes, estructura la respuesta en una tabla con formato markdown, con una columna para las ventajas y otra para inconvenientes.\n"
+                "Si te preguntan una comparativa, estructura la respuesta en una tabla con formato markdown, con una columna para cada elemento a comparar.\n"
+                "No te posicionarás ni recomendarás una opción. Si la respuesta incluye la opinión de expertos deberás cítalos\n"
+            )
+    chat_text_qa_msgs = [
+        ChatMessage(
+            role=MessageRole.SYSTEM,
+            content=basic_content,
+        ),
+        ChatMessage(role=MessageRole.USER, content=qa_prompt_str),
+    ]
+    text_qa_template = ChatPromptTemplate(chat_text_qa_msgs)
+
+    # Custom Refine Prompt
+    refine_prompt_str = (
+        "Tenemos la oportunidad de refinar la respuesta original "
+        "(solo si es necesario) con más contexto a continuación.\n"
+        "------------\n"
+        "{context_msg}\n"
+        "------------\n"
+        "Dado el nuevo contexto, refinar la respuesta original para mejorar "
+        "responde a la pregunta, en el mismo idioma: {query_str}. "
+        "Si el contexto no es útil, envíe la respuesta original de nuevo.\n"
+        "Respuesta original: {existing_answer}"
+    )
+    
+    chat_refine_msgs = [
+        ChatMessage(
+            role=MessageRole.SYSTEM,
+            content=basic_content,
+        ),
+        ChatMessage(role=MessageRole.USER, content=refine_prompt_str),
+    ]
+    refine_template = ChatPromptTemplate(chat_refine_msgs)
+
+    return index.as_query_engine(text_qa_template=text_qa_template,
+                                 refine_template=refine_template,
+                                 similarity_top_k=5)
+
 
 # Main function to get the result for a given question
 def get_result_for_question(question):

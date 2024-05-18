@@ -1,3 +1,9 @@
+---
+title: LA TRANSICIÓN ENERGÉTICA EN CATALUNA - ASAMBLEA CIUDADANA POR EL CLIMA DE CATALUÑA
+author: Departamento de Acción Climática, Alimentación y Agenda Rural; Riba, Carles; Cugat, Xavier; Riu, Manel
+keywords: transición energética; descentralización; energías renovables; autoconsumo
+---
+
 # LA TRANSICIÓN ENERGÉTICA EN CATALUNA - ASAMBLEA CIUDADANA POR EL CLIMA DE CATALUÑA
 
 ## Posiciones de los expertos

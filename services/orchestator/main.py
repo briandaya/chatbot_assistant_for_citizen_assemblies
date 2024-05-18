@@ -51,7 +51,7 @@ async def rag_query(model_name: str, action: str, request: QueryRequest):
         logging.info(f"Received query: {query}")
         # Llama a la función de RAG para obtener la respuesta
         result = get_result_for_question(query)
-        logging.info(f"Query result: {result}")
+        #logging.info(f"Query result: {result}")
         #response_content = result.get("answer", "No se pudo obtener una respuesta.")
         
         return result#{"response": response_content}
