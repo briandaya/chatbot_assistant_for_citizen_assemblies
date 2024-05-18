@@ -4,3 +4,6 @@
 
 Prototipo de chatbot de confianza para Asambleas Ciudadanas, utilizando LLMs y técnicas como RAG. Es modular y listo para trabajar con modelos de código abierto.
 Vuelve pronto, la documentación se actualizará cuando finalice la memoria del proyecto.
+
+TFG Grado de Ciencia de Datos Aplicada
+Brianda Yáñez-Arrondo 2024
